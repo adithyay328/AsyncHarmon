@@ -13,9 +13,10 @@ import concurrent.futures
 class AsyncHarmonicWrapper:
     # Takes in a pre-constructed harmonic client from your codebase as the only
     # constructor input
-    def __init__(self, harmonicClient : HarmonicClient) -> None:
+    def __init__(self, harmonicClient : HarmonicClient, numWorkers=10) -> None:
+        self.numWorkers = numWorkers
         self.rawClient = harmonicClient
-        self.pool = concurrent.futures.ThreadPoolExecutor(max_workers=10)
+        self.pool = concurrent.futures.ThreadPoolExecutor(numWorkers)
 
     # A general function to parallelize IO callables. Takes in [callables, [(params for each callable)]]
     # and ends up returning a list of results, with ordering preserved.
@@ -78,7 +79,7 @@ class AsyncHarmonicWrapper:
         return self._parralelizeCallables(callableList, arugmentTupleList)
     
     # Runs a single encrich people call just to make this API complete
-    def encrich_person(self, url):
+    def enrich_person(self, url):
         return self.rawClient.enrich_person(url)
     
     # Gets all saved searches
